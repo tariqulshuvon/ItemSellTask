@@ -1,0 +1,109 @@
+﻿@model IEnumerable<ItemSellTask.Models.Item>
+
+@{
+    ViewData["Title"] = "Index";
+    int idno = 1;
+}
+
+<div class="row mt-5">
+    <div class="col-md-12 d-flex">
+        <div class="card card-table flex-fill">
+            <div class="card-header">
+                <h4 class="card-title float-left mt-2">Item List</h4>
+                <a asp-action="Create" class="btn btn-primary float-right veiwbutton"><i class="fa fa-plus" aria-hidden="true"></i> Create Item</a>
+            </div>
+            <div class="card-body m-4">
+                <div class="table-responsive">
+                    <table class="table table-hover table-center" id="itemTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Item Name</th>
+                                <th>Item Description</th>
+                                <th>Item Price</th>
+                                <th>Total Item Count</th>
+                                <th>Category</th>
+                                <th>Sells</th> 
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int totalItemCount = 0;
+                            }
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @idno
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ItemName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ItemDescription)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ItemPrice)
+                                    </td>
+                                    <td>
+                                        @item.ItemCount
+                                        @{
+                                            totalItemCount += item.ItemCount;
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                                    </td>
+                                    <td class="text-center">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>Item Name</th>
+                                                <td>@item.ItemName</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Item Price</th>
+                                                <td>$@item.ItemPrice</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Quantity Available</th>
+                                                <td>@item.ItemCount</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Quantity Sold</th>
+                                                <td>@item.QuantitySold</td>
+                                            </tr>
+                                        </table>
+                                        <form asp-action="Sell" asp-route-id="@item.Id" method="post">
+                                            <input type="submit" value="Sell" class="btn btn-primary mt-2" />
+                                        </form>
+                                    </td>
+
+                                    <td class="text-end">
+                                        <a class="btn btn-info" asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-edit" aria-hidden="true"></i> Edit</a> |
+                                        <a class="delete-button btn btn-danger" asp-action="Delete" asp-route-id="@item.Id" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>
+                                    </td>
+
+                                </tr>
+                                idno += 1;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p>Total Item Count: @totalItemCount</p>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $('#itemTable').DataTable();
+        })
+    </script>
+}
